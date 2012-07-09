@@ -1,0 +1,33 @@
+PLUGIN_SBCLOUDPLAYER
+	EN	SBCloudPlayer
+
+PLUGIN_SBCLOUDPLAYER_DESCRIPTION
+	EN	Browse and play music from Amazon Cloud Player.
+
+PLUGIN_SBCLOUDPLAYER_DISPLAY_NAME
+	EN	Amazon Cloud Player
+
+PLUGIN_SBCLOUDPLAYER_BROWSE_ARTISTS
+	EN	Artists
+
+PLUGIN_SBCLOUDPLAYER_BROWSE_ALBUMS
+	EN	Albums
+
+PLUGIN_SBCLOUDPLAYER_BROWSE_SONGS
+	EN	Songs
+
+PLUGIN_SBCLOUDPLAYER_ERROR_LOADING
+	EN	Error loading data from Amazon
+
+
+PLUGIN_SBCLOUDPLAYER_USERNAME
+	EN	Username
+
+PLUGIN_SBCLOUDPLAYER_USERNAME_DESC
+	EN	The username (e-mail address) used on Amazon.
+
+PLUGIN_SBCLOUDPLAYER_PASSWORD
+	EN	Password
+
+PLUGIN_SBCLOUDPLAYER_PASSWORD_DESC
+	EN	Your Amazon account password. This will not be saved. It is only used to generate a session token.

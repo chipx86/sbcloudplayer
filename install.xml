@@ -1,0 +1,21 @@
+<?xml version='1.0' standalone="yes"?>
+
+<extension>
+  <id>febd3ca7-9d5c-4713-96b0-d8b93f651345</id>
+  <name>PLUGIN_SBCLOUDPLAYER_DISPLAY_NAME</name>
+  <version>0.1</version>
+  <type>2</type><!-- extension -->
+  <description>PLUGIN_SBCLOUDPLAYER_DESCRIPTION</description>
+  <creator>Christian Hammond</creator>
+  <email>chipx86@chipx86.com</email>
+  <homepageURL>http://github.com/chipx86/sbcloudplayer/</homepageURL>
+  <optionsURL>plugins/SBCloudPlayer/settings/basic.html</optionsURL>
+  <icon>plugins/SBCloudPlayer/html/images/amazoncloudplayer.png</icon>
+  <defaultState>enabled</defaultState>
+  <module>Plugins::SBCloudPlayer::Plugin</module>
+  <targetApplication>
+    <id>SlimServer</id>
+    <maxVersion>7.7+</maxVersion>
+    <minVersion>7.7</minVersion>
+  </targetApplication>
+</extension>

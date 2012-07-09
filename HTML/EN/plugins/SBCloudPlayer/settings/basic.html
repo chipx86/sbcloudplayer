@@ -1,0 +1,15 @@
+[% PROCESS settings/header.html %]
+
+[% WRAPPER setting title="PLUGIN_SBCLOUDPLAYER" desc="" %]
+ <div class="prefDesc">[% "PLUGIN_SBCLOUDPLAYER_DESCRIPTION" | string %]</div>
+[% END %]
+
+[% WRAPPER setting title="PLUGIN_SBCLOUDPLAYER_USERNAME" desc="PLUGIN_SBCLOUDPLAYER_USERNAME_DESC" %]
+ <input type="text" class="stdedit" name="username" id="username" value="[% username %]" size="40" />
+[% END %]
+
+[% WRAPPER setting title="PLUGIN_SBCLOUDPLAYER_PASSWORD" desc="PLUGIN_SBCLOUDPLAYER_PASSWORD_DESC" %]
+ <input type="password" class="stdedit" name="password" id="password" value="[% password %]" size="40" />
+[% END %]
+
+[% PROCESS settings/footer.html %]
