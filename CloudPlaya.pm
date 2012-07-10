@@ -95,7 +95,7 @@ sub get_albums {
         }
     }
 
-    @albums = sort { $a->{'name'} <=> $b->{'name'} } @albums;
+    @albums = sort { $a->{'name'} cmp $b->{'name'} } @albums;
 
     $cache->set($cache_key, \@albums, 86400);
 
@@ -162,9 +162,9 @@ sub get_songs_by_artist {
 
     # push @result, sort {
         # if ($a->{'track_num'} == $b->{'track_num'}) {
-            # $a->{'title'} <=> $a->{'title'},
+            # $a->{'title'} cmp $a->{'title'},
         # } else {
-            # $a->{'track_num'} <=> $a->{'track_num'},
+            # $a->{'track_num'} cmp $a->{'track_num'},
         # }
     # } @songs;
 
@@ -247,11 +247,11 @@ sub get_songs_by_album {
 
     @songs = sort {
         # if ($a->{'track_num'} eq $b->{'track_num'}) {
-            # $a->{'title'} <=> $a->{'title'},
+            # $a->{'title'} cmp $a->{'title'},
         # } else {
-            # $a->{'track_num'} <=> $a->{'track_num'},
+            # $a->{'track_num'} cmp $a->{'track_num'},
         # }
-        $a->{'track_num'} <=> $a->{'track_num'},
+        $a->{'track_num'} cmp $a->{'track_num'},
     } @songs;
 
     $cache->set($cache_key, \@songs, 86400);

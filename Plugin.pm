@@ -342,9 +342,10 @@ sub list_albums {
             };
         },
         Plugins::SBCloudPlayer::CloudPlaya->get_albums($artist));
+
     $callback->({
         items => \@menu,
-        sorted => 1,
+        sorted => 0,
     });
 }
 
