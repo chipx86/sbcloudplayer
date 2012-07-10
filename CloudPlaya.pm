@@ -6,7 +6,7 @@ use Slim::Utils::Log;
 
 
 my $log = logger('plugin.sbcloudplayer');
-my $cache = Slim::Utils::Cache->new('dbcloudplayer');
+my $cache = Slim::Utils::Cache->new('sbcloudplayer');
 
 
 sub authenticate {
