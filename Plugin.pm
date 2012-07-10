@@ -15,6 +15,7 @@ use File::Spec::Functions qw(:ALL);
 use Slim::Utils::Log;
 use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
+use URI::Escape qw(uri_escape uri_escape_utf8);
 
 
 my $log = Slim::Utils::Log->addLogCategory({
@@ -38,6 +39,11 @@ sub initPlugin {
     );
 
     Plugins::SBCloudPlayer::Settings->new;
+
+    # Slim::Menu::AlbumInfo->registerInfoProvider(sbcloudplayer => (
+        # below => 'addalbum',
+        # func  => \&album_info_handler,
+    # ));
 }
 
 
@@ -52,6 +58,44 @@ sub playerMenu {
 }
 
 
+# sub album_info_handler {
+    # return _object_info_handler('album', @_);
+# }
+
+
+# sub _object_info_handler {
+    # my ($object_type, $client, $url, $obj, $remote_meta, $tags) = @_;
+    # $tags ||= {};
+
+    # my $special;
+
+    # if ($objectType eq 'album') {
+        # $special->{'actionParam'} = 'album_id';
+        # $special->{'modeParam'}   = 'album';
+        # $special->{'urlKey'}      = 'album';
+    # }
+
+    # if ($mixable) {
+        # return {
+            # type => 'redirect',
+            # jive => {
+                # actions => {
+                    # go => {
+                        # player => 0,
+                        # cmd => ['musicip', 'mix'],
+                        # params => {
+                            # menu => 1,
+                            # useContextMenu => 1,
+                            # $special->{'actionParam'} = $obj->id,
+                        # },
+                    # },
+                # },
+            # },
+        # };
+    # }
+# }
+
+
 sub toplevel {
     my ($client, $callback, $args) = @_;
 
@@ -59,16 +103,13 @@ sub toplevel {
         {
             name => $client->string('PLUGIN_SBCLOUDPLAYER_BROWSE_ARTISTS'),
             url => \&list_artists,
+            icon => 'html/images/artists.png',
             type => 'link',
         },
         {
             name => $client->string('PLUGIN_SBCLOUDPLAYER_BROWSE_ALBUMS'),
             url => \&list_albums,
-            type => 'link',
-        },
-        {
-            name => $client->string('PLUGIN_SBCLOUDPLAYER_BROWSE_SONGS'),
-            url => \&list_songs,
+            icon => 'html/images/albums.png',
             type => 'link',
         },
     );
@@ -119,37 +160,45 @@ sub list_songs {
     my $by_type = shift;
     my $cover_image_url = '';
     my @menu;
+    my %actions;
+    my $albumData;
+    my $albumInfo;
 
     if ($by_type eq 'by-artist') {
-        my $artist = shift;
+        # my $artist = shift;
 
-        @menu = &populate_from_cloudplaya(
-            $client,
-            sub {
-                my $song = shift;
-                my $item = {
-                    name => $song->{'title'},
-                    type => 'audio',
-                    line1 => $song->{'title'},
-                    line2 => $song->{'artist'},
-                    #play_index => $song->{'track_num'},
-                    #discc => $song->{'disc_num'},
-                    playall => 1,
-                    hasMetadata => 'track',
-                };
+        # @menu = &populate_from_cloudplaya(
+            # $client,
+            # sub {
+                # my $song = shift;
+                # my $item = {
+                    # name => $song->{'title'},
+                    # type => 'audio',
+                    # line1 => $song->{'title'},
+                    # line2 => $song->{'artist'},
+                    # artist => $song->{'artist'}, # TODO: trackartst vs. artist
+                    # #play_index => $song->{'track_num'},
+                    # #discc => $song->{'disc_num'},
+                    # playall => 1,
+                    # hasMetadata => 'track',
+                    # duration => $song->{'duration'},
+                    # url => $song->{'url'},
+                # };
 
-                if (my $secs = $song->{'duration'}) {
-                    $item->{'secs'} = $secs;
-                    $item->{'duration'} = sprintf('%d:%02d', int($secs / 60),
-                                                  $secs % 60);
-                }
+                # # if (my $secs = $song->{'duration'}) {
+                    # # $item->{'secs'} = $secs;
+                    # # $item->{'duration'} = sprintf('%d:%02d', int($secs / 60),
+                                                  # # $secs % 60);
+                    # # $item->{'duration'} = $secs;
+                # # }
 
-                return $item;
-            },
-            Plugins::SBCloudPlayer::CloudPlaya->get_songs_by_artist(
-                $artist));
+                # return $item;
+            # },
+            # Plugins::SBCloudPlayer::CloudPlaya->get_songs_by_artist(
+                # $artist));
     } elsif ($by_type eq 'by-album') {
         my $album = shift;
+        my $offset = 0;
 
         $cover_image_url = $album->{'cover_image_url'};
 
@@ -158,14 +207,21 @@ sub list_songs {
             sub {
                 my $song = shift;
                 my $item = {
-                    name => $song->{'track_num'} . '. ' . $song->{'title'},
+                    name => $song->{'title'},
+                    text => $song->{'title'},
+                    title => $song->{'title'},
                     type => 'audio',
                     line1 => $song->{'title'},
                     line2 => $song->{'artist'},
-                    #play_index => $song->{'track_num'},
-                    #discc => $song->{'disc_num'},
+                    name2 => $song->{'artist'},
+                    album => $song->{'album'},
+                    artist => $song->{'artist'}, # TODO: trackartst vs. artist
+                    play_index => $offset++,
                     playall => 1,
+                    discc => int($song->{'disc_num'}),
                     hasMetadata => 'track',
+                    url => $song->{'url'},
+                    image => $cover_image_url,
                 };
 
                 if (my $secs = int($song->{'duration'})) {
@@ -177,11 +233,69 @@ sub list_songs {
                 return $item;
             },
             Plugins::SBCloudPlayer::CloudPlaya->get_songs_by_album($album));
+
+        # my $album = Slim::Schema->find(Album => $albumId);
+        # my $feed = Slim::Menu::AlbumInfo->menu($client, $album->url,
+                                               # $album, undef) if $album;
+        # $albumMetadata = $feed->{'items'} if $feed;
+
+        %actions = (
+            allAvailableActionsDefind => 1,
+            commonVariable => [album_id => 'id'],
+            info => {
+                command => ['albuminfo', 'items'],
+            },
+            play => {
+                command => ['playlistcontrol'],
+                fixedParams => {cmd => 'load'},
+            },
+            add => {
+                command => ['playlistcontrol'],
+                fixedParams => {cmd => 'add'},
+            },
+            insert => {
+                command => ['playlistcontrol'],
+                fixedParams => {cmd => 'insert'},
+            },
+            remove => {
+                command => ['playlistcontrol'],
+                fixedParams => {cmd => 'delete'},
+            },
+        );
+        $actions{'playall'} = $actions{'play'};
+        $actions{'addall'} = $actions{'add'};
+
+        # if ($args->{'wantMetadata'}) {
+            # $ret->{'albumInfo'} = {
+                # info => {
+                    # command => ['sbcloudplayerinfocmd', 'items'],
+                # },
+            # };
+
+            # $ret->{'albumData'} = [
+                # {
+                    # type => 'link',
+                    # label => 'ARTIST',
+                    # name => $album->{'artist'},
+                    # url => 'anyurl',
+                    # #itemActions
+                # },
+                # {
+                    # type => 'link',
+                    # label => 'ALBUM',
+                    # name => $album->{'name'},
+                # },
+            # ];
+        # }
     }
 
     $callback->({
         cover => $cover_image_url,
         items => \@menu,
+        #actions => \%actions,
+        sorted => 0,
+        albumInfo => $albumInfo,
+        albumData => $albumData,
     });
 }
 
@@ -195,19 +309,22 @@ sub list_artists {
 
             return {
                 name => $artist,
-                type => 'link',
+                type => 'playlist',
                 url => \&list_albums,
-                passthrough => [$artist],
+                playlist => \&list_songs,
+                passthrough => ['by-artist', $artist],
             };
         },
         Plugins::SBCloudPlayer::CloudPlaya->get_artists());
-    $callback->(\@menu);
+    $callback->({
+        items => \@menu,
+        sorted => 1,
+    });
 }
 
 sub list_albums {
-    my ($client, $callback, $args, $artist) = @_;
+    my ($client, $callback, $args, $by_type, $artist) = @_;
 
-    $log->error("Artist = $artist");
     my @menu = &populate_from_cloudplaya(
         $client,
         sub {
@@ -215,14 +332,20 @@ sub list_albums {
 
             return {
                 name => $album->{'name'},
-                image => $album->{'cover_image_url'},
-                type => 'link',
+                image => uri_escape($album->{'cover_image_url'}),
+                icon => $album->{'cover_image_url'},
+                type => 'playlist',
+                playlist => \&list_songs,
                 url => \&list_songs,
+                hasMetadata => 'album',
                 passthrough => ['by-album', $album],
             };
         },
         Plugins::SBCloudPlayer::CloudPlaya->get_albums($artist));
-    $callback->(\@menu);
+    $callback->({
+        items => \@menu,
+        sorted => 1,
+    });
 }
 
 
