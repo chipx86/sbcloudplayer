@@ -11,9 +11,11 @@ my $cache = Slim::Utils::Cache->new('sbcloudplayer');
 
 sub authenticate {
     my ($class, $username, $password) = @_;
+    $username =~ s/"/\\"/g;
+    $password =~ s/"/\\"/g;
 
-    return $class->run("authenticate --username='$username' " .
-                       "--password='$password'")
+    return $class->run("authenticate --username=\"$username\" " .
+                       "--password=\"$password\"")
 }
 
 
@@ -70,8 +72,8 @@ sub get_albums {
     my $params = '';
 
     if ($artist) {
-        $artist =~ s/'/\\'/g;
-        $params = "--artist='$artist'";
+        $artist =~ s/"/\\"/g;
+        $params = "--artist=\"$artist\"";
     }
 
     my $query_result =
@@ -188,11 +190,12 @@ sub get_songs_by_album {
 
     my $artist_name = $album->{'artist'};
     my $album_name = $album->{'name'};
-    $artist_name =~ s/'/\\'/g;
-    $album_name =~ s/'/\\'/g;
+    $artist_name =~ s/"/\\"/g;
+    $album_name =~ s/"/\\"/g;
 
     my $query_result =
-        $class->run("get-songs --artist='$artist_name' --album='$album_name' " .
+        $class->run("get-songs --artist=\"$artist_name\" " .
+                    "--album=\"$album_name\" " .
                     "--format='%(id)s\t%(track_num)s\t%(artist_name)s\t" .
                     "%(album_name)s\t%(title)s\t" .
                     "%(duration)s\t%(disc_num)s'");
