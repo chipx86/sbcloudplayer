@@ -48,7 +48,7 @@ sub handler {
         my ($errcode, @lines) = @$result;
 
         if ($errcode ne '') {
-            $errmsg = join('\n', @lines);
+            my $errmsg = join('\n', @lines);
             $log->error("Failed to authenticate: $errmsg");
             $callback->();
         }
