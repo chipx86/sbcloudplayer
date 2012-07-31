@@ -46,8 +46,8 @@ Configuration
 -------------
 
 You will need to authenticate once with your Amazon username and password.
-Go into :guilabel:`Settings -> Advanced -> SBCloudPlayer`, enter your Amazon
-username and password, and hit :guilabel:`Apply`.
+Go into ``Settings -> Advanced -> SBCloudPlayer``, enter your Amazon
+username and password, and hit ``Apply``.
 
 Authentication might take several seconds to complete.
 
@@ -60,7 +60,7 @@ Usage
 
 Once you have authenticated, you can close the settings and go back
 to your main Squeezebox UI. You should see an Amazon Cloud Player entry
-under :guilabel:`My Apps`. Just browse for what you want to play!
+under ``My Apps``. Just browse for what you want to play!
 
 
 Known Problems
@@ -69,4 +69,4 @@ Known Problems
 I suspect that the URLs for streaming songs change every so often. Right now,
 we cache the URLs, but this doesn't seem to be a good long-term solution.
 If this is a proble, clear out your
-:file:`/var/lib/squeezeboxserver/cache/sbcloudplayer.db*` caches.
+``/var/lib/squeezeboxserver/cache/sbcloudplayer.db*`` caches.
