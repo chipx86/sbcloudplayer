@@ -43,10 +43,13 @@ sub handler {
     if ($params->{'username'} ne '' and $password ne '') {
         my $result = Plugins::SBCloudPlayer::CloudPlaya->authenticate(
             $params->{'username'},
-            $params->{'password'});
+            $password);
 
-        if ($? != 0) {
-            $log->error("Failed to authenticate: $result");
+        my ($errcode, @lines) = @$result;
+
+        if ($errcode ne '') {
+            $errmsg = join('\n', @lines);
+            $log->error("Failed to authenticate: $errmsg);
             $callback->();
         }
     }
