@@ -206,28 +206,30 @@ sub list_songs {
             $client,
             sub {
                 my $song = shift;
+                my $year = $song->{'album_release_date'};
+                $year =~ s/^(\d{4})-.*/$1/g;
+
                 my $item = {
-                    name => $song->{'title'},
-                    text => $song->{'title'},
-                    title => $song->{'title'},
                     type => 'audio',
-                    line1 => $song->{'title'},
-                    line2 => $song->{'artist'},
+                    title => $song->{'title'},
+                    name => $song->{'title'},
                     name2 => $song->{'artist'},
                     album => $song->{'album'},
                     artist => $song->{'artist'}, # TODO: trackartst vs. artist
+                    tracknum => $song->{'track_num'},
+                    track => $song->{'track_num'},
                     play_index => $offset++,
                     playall => 1,
-                    discc => int($song->{'disc_num'}),
+                    disc => $song->{'disc_num'},
                     hasMetadata => 'track',
+                    year => $year,
                     url => $song->{'url'},
                     image => $cover_image_url,
                 };
 
-                if (my $secs = int($song->{'duration'})) {
+                if (my $secs = $song->{'duration'}) {
                     $item->{'secs'} = $secs;
-                    $item->{'duration'} = sprintf('%d:%02d', int($secs / 60),
-                                                  $secs % 60);
+                    $item->{'duration'} = $secs;
                 }
 
                 return $item;
@@ -329,6 +331,8 @@ sub list_albums {
         $client,
         sub {
             my $album = shift;
+            my $year = $album->{'release_date'};
+            $year =~ s/^(\d{4})-.*/$1/g;
 
             return {
                 name => $album->{'name'},
@@ -336,8 +340,10 @@ sub list_albums {
                 icon => $album->{'cover_image_url'},
                 type => 'playlist',
                 playlist => \&list_songs,
+                artist => $album->{'artist_name'},
                 url => \&list_songs,
                 hasMetadata => 'album',
+                year => $year,
                 passthrough => ['by-album', $album],
             };
         },

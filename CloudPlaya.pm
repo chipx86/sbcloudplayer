@@ -79,7 +79,7 @@ sub get_albums {
     my $query_result =
         $class->run("get-albums $params " .
                     "--format='%(id)s\t%(name)s\t%(artist_name)s\t" .
-                    "%(cover_image_url)s'");
+                    "%(release_date)s\t%(cover_image_url)s'");
     my ($errcode, @lines) = @$query_result;
 
     my @albums;
@@ -93,6 +93,7 @@ sub get_albums {
             id => shift @info,
             name => shift @info,
             artist => shift @info,
+            release_date => shift @info,
             cover_image_url => shift @info,
         }
     }
@@ -198,7 +199,7 @@ sub get_songs_by_album {
                     "--album=\"$album_name\" " .
                     "--format='%(id)s\t%(track_num)s\t%(artist_name)s\t" .
                     "%(album_name)s\t%(title)s\t" .
-                    "%(duration)s\t%(disc_num)s'");
+                    "%(duration)s\t%(disc_num)s\t%(album_release_date)s'");
     my ($errcode, @lines) = @$query_result;
 
     my @result;
@@ -226,6 +227,7 @@ sub get_songs_by_album {
             title => shift @info,
             duration => shift @info,
             disc_num => shift @info,
+            album_release_date => shift @info,
         };
 
         push @song_ids, $id;
