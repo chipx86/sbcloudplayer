@@ -40,6 +40,9 @@ sub initPlugin {
 
     Plugins::SBCloudPlayer::Settings->new;
 
+#    Slim::Player::ProtocolHandlers->registerHandler(
+#        cloudplaya => 'Plugins::SBCloudPlayer::ProtocolHandlerCloudPlaya');
+
     # Slim::Menu::AlbumInfo->registerInfoProvider(sbcloudplayer => (
         # below => 'addalbum',
         # func  => \&album_info_handler,
@@ -230,6 +233,8 @@ sub list_songs {
                 if (my $secs = $song->{'duration'}) {
                     $item->{'secs'} = $secs;
                     $item->{'duration'} = $secs;
+                    #$item->{'duration'} = sprintf('%d:%02d', int($secs / 60),
+                    #                              $secs % 60);
                 }
 
                 return $item;
@@ -296,8 +301,8 @@ sub list_songs {
         items => \@menu,
         #actions => \%actions,
         sorted => 0,
-        albumInfo => $albumInfo,
-        albumData => $albumData,
+#        albumInfo => $albumInfo,
+#        albumData => $albumData,
     });
 }
 
@@ -318,6 +323,7 @@ sub list_artists {
             };
         },
         Plugins::SBCloudPlayer::CloudPlaya->get_artists());
+
     $callback->({
         items => \@menu,
         sorted => 1,

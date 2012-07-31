@@ -49,7 +49,7 @@ sub handler {
 
         if ($errcode ne '') {
             $errmsg = join('\n', @lines);
-            $log->error("Failed to authenticate: $errmsg);
+            $log->error("Failed to authenticate: $errmsg");
             $callback->();
         }
     }
